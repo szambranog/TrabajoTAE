@@ -1,7 +1,7 @@
 ---
-title: "Predicción de la satisfacción de niñxs y abuelxs"
-author: "Esteban Rojas Henao"
-date: "25/4/2022"
+title: 'Predicción de la satisfacción de niñxs y abuelxs'
+author: 'Esteban Rojas Henao'
+date: '25/4/2022'
 output:
  html_document:
         toc: true
@@ -11,20 +11,16 @@ output:
         toc_float: true
 ---
 
-\newpage
-\tableofcontents
-\listoffigures
-\listoftables
-\newpage
-
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE)
 ```
 
 ```{r librerias}
 library(corrplot)
 library(skimr)
 library(ggplot2)
+library(reshape2)
+library(corrplot)
 ```
 
 # Lectura de datos
@@ -39,7 +35,7 @@ Las variables que se consideran son las siguientes:
 * **FEX_C:** Factor de expansión
 * **P6016:** Número de orden de la persona que proporciona la información (Necesaria?)
 * **P1894:** Tipo de documento de identidad (1 Registro civil, 2 Tarjeta de identidad, 3 Cédula ciudadanía, 4 Cédula extranjería, 5 No tiene)
-* **P6020:** Sexo
+* **P6020:** Sexo (1 Hombre, 2 Mujer)
 * **P6034:** Fecha de nacimiento
 * **P6040:** Edad
 * **P6051:** Parentesco jefe de hogar (1 Jefe, 2 Pareja, 3 Hijx, 4 Nietx, 5 Padre/Madre, 6 Suegrx, 7 Hermanx, 8 Yerno/Nuera, 9 Otro pariente jefe, 10 Empleadx servicio doméstico, 11 Pariente servicio doméstico, 12 Trabajador, 13 Pensionista, 14 Otro)
@@ -81,7 +77,7 @@ Las variables que se consideran son las siguientes:
 * **P1927:** En cuál escalón se encuentra (0-10)
 
 ```{r lectura_bd}
-df <- read.csv('data.csv', sep=';')
+df <- read.csv('data.csv', sep=';', dec=',')
 edad_max_ninxs <- 12
 edad_min_abuelxs <- 60
 
@@ -91,14 +87,12 @@ df$P756S3[is.na(df$P756S3)] <- 11
 df$P6096[is.na(df$P6096)] <- 12
 df$P6051[is.na(df$P6051)] <- 14
 
-df[c('P756S1', 'P756S2', 'P5667')][is.na(df[c('P756S1', 'P756S2', 'P5667')])] <- "na"
+#df[c('P756S1', 'P756S2', 'P5667')][is.na(df[c('P756S1', 'P756S2', 'P5667', 'P6087', 'P6088')])] <- 'na'
 df[c('P6020', 'P6040', 'P6071S1', 'P756', 'P6076', 'P6076S1', 'P6076S2', 'P6081S1', 'P6083S1')][is.na(df[c('P6020', 'P6040', 'P6071S1', 'P756', 'P6076', 'P6076S1', 'P6076S2', 'P6081S1', 'P6083S1')])] <- 0
 df[c('P6077', 'P6081', 'P6083', 'P6071', 'P6034')][is.na(df[c('P6077', 'P6081', 'P6083', 'P6071', 'P6034')])] <- 2
 df[c('P2057', 'P2059', 'P2061')][is.na(df[c('P2057', 'P2059', 'P2061')])] <- 3
 df[c('P1894', 'P5502', 'P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175', 'P1901', 'P1903', 'P1904', 'P1905', 'P1927')][is.na(df[c('P1894', 'P5502', 'P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175', 'P1901', 'P1903', 'P1904', 'P1905', 'P1927')])] <- 5
 df$P6080[is.na(df$P6080)] <- 6
-df[c('P6087', 'P6088')][is.na(df[c('P6087', 'P6088')])] <- "na"
-
 
 df_ninxs <- df[df$P6040 <= edad_max_ninxs, ]
 df_abuelxs <- df[df$P6040 >= edad_min_abuelxs, ]
@@ -171,11 +165,13 @@ Para lxs abuelxs la mayoría se encuentra entre 60 y 65 años, a partir de ahí 
 
 ### Niñxs
 
-Para el nivel de satisfacción de lxs niñxs, se llenó esta columna con el valor medio (5), por lo que no nos da información del nivel de satisfacción según la encuensta
+Para el nivel de satisfacción de lxs niñxs, se llenó esta columna con el valor medio (5), por lo que no nos da información del nivel de satisfacción según la encuesta
 
 ### Abuelxs
 
 Veremos el nivel de satisfacción de lxs abuelxs
+
+#### Gráficos de barras
 
 ```{r satisfaccion_abuelxs}
 par(mfrow=c(2, 3))
@@ -196,8 +192,16 @@ barp <- barplot(table(df_abuelxs$P3175), beside=TRUE, col=cols[6], main='Satisfa
 text(barp, table(df_abuelxs$P3175) + 60, labels = table(df_abuelxs$P3175), cex=0.8)
 ```
 
-Vemos que en lxs abuelxs, el nivel de satisfacción se encuentra mayoritariamente en 8, seguido por 10, por abajo de 8 se nota que, entre menos valor, menos número de personas, a excepción del nivel de satisfacción en el trabajo, que en 0 tiene 303 respuestas
 
+Vemos que en lxs abuelxs, el nivel de satisfacción se encuentra mayoritariamente en 8, seguido por 10, por abajo de 8 se nota que, entre menos valor, menos número de personas, a excepción del nivel de **satisfacción en el trabajo**, que en 0 tiene 303 respuestas
+
+#### Correlación Satisfacción
+
+```{r}
+res <- cor(df[c('P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175')])
+corrplot(res, type = 'upper', tl.col = 'black', tl.srt=45, sig.level=0.5, insig='blank', method='pie', addCoef.col = 'black')
+```
+Vemos que las las variables con mayor correlación son **Satisfacción de Vida** con **Satisfacción Salud** (66%) y **Satisfacción Vida** con **Satisfacción Tiempo libre** (62%)
 
 # Gráfico sin uso, usar en otras variables (Menos de 55 barras ~30)
 ```{r extra}
@@ -217,3 +221,5 @@ text(barp, tbl + 30, labels = tbl, cex=0.4)
 legend('topleft', fill=cols[1:6], legend=c('Vida', 'Ingreso', 'Salud', 'Seguridad', 'Trabajo', 'Tiempo libre'), cex=0.8, x.intersp=0.2, y.intersp=0.85)
 ```
 
+\listoffigures figuritas
+\listoftables tablitas
