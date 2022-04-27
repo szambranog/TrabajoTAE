@@ -161,8 +161,8 @@ legend('top', fill=cols, legend=c('60-65', '65-70', '70-75', '75-80', '>80'), ho
 
 #### Histograma
 
-```{r}
-hist(df_abuelxs$P6040, xlab='Edad', ylab='Frecuencia', main='Histograma de la edad', col='steelblue')
+```{r hist_edad_abuelxs}
+h <- hist(df_abuelxs$P6040, xlab='Edad', ylab='Frecuencia', main='Histograma de la edad', col=cols[8], ylim=c(0, 2000), labels=TRUE)
 ```
 
 Para lxs abuelxs la mayoría se encuentra entre 60 y 65 años, a partir de ahí en cada grupo hay menos personas. Debido al número de personas mayores a 80 años, a partir de esta edad se agrupan en un único grupo y no se divide en intervalos de 5 años.
@@ -177,8 +177,7 @@ Para el nivel de satisfacción de lxs niñxs, se llenó esta columna con el valo
 
 Veremos el nivel de satisfacción de lxs abuelxs
 
-
-```{r}
+```{r satisfaccion_abuelxs}
 par(mfrow=c(2, 3))
 
 df_abuelxs$P1896 <- ifelse(df_abuelxs$P1896 == 99, 10, df_abuelxs$P1896)
@@ -201,7 +200,7 @@ Vemos que en lxs abuelxs, el nivel de satisfacción se encuentra mayoritariament
 
 
 # Gráfico sin uso, usar en otras variables (Menos de 55 barras ~30)
-```{r}
+```{r extra}
 tbl1 <- with(df_abuelxs, table(P1895))
 tbl2 <- with(df_abuelxs, table(P1896))
 tbl3 <- with(df_abuelxs, table(P1897))
