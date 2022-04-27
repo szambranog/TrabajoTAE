@@ -1,0 +1,220 @@
+---
+title: "Predicción de la satisfacción de niñxs y abuelxs"
+author: "Esteban Rojas Henao"
+date: "25/4/2022"
+output:
+ html_document:
+        toc: true
+        theme: united
+        number_sections: true
+        highlight: haddock
+        toc_float: true
+---
+
+\newpage
+\tableofcontents
+\listoffigures
+\listoftables
+\newpage
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r librerias}
+library(corrplot)
+library(skimr)
+library(ggplot2)
+```
+
+# Lectura de datos
+
+Se lee un conjunto de datos sobre información del hogar, estos datos son tomados de la [Encuesta Nacional de Calidad de Vida](https://microdatos.dane.gov.co/index.php/catalog/MICRODATOS/about_collection/8/?per_page=15).
+Las variables que se consideran son las siguientes:
+
+* **DIRECTORIO:** Directorio (Necesaria?)
+* **SECUENCIA_ENCUESTA:** Secuencia encuesta (Necesaria?)
+* **SECUENCIA_P:** Secuencia p (Necesaria?)
+* **ORDEN:** Orden (Necesaria?)
+* **FEX_C:** Factor de expansión
+* **P6016:** Número de orden de la persona que proporciona la información (Necesaria?)
+* **P1894:** Tipo de documento de identidad (1 Registro civil, 2 Tarjeta de identidad, 3 Cédula ciudadanía, 4 Cédula extranjería, 5 No tiene)
+* **P6020:** Sexo
+* **P6034:** Fecha de nacimiento
+* **P6040:** Edad
+* **P6051:** Parentesco jefe de hogar (1 Jefe, 2 Pareja, 3 Hijx, 4 Nietx, 5 Padre/Madre, 6 Suegrx, 7 Hermanx, 8 Yerno/Nuera, 9 Otro pariente jefe, 10 Empleadx servicio doméstico, 11 Pariente servicio doméstico, 12 Trabajador, 13 Pensionista, 14 Otro)
+* **P5502:** Situación sentimental (1 No casado vive en pareja < 2 años, 2 No caso vive en pareja >= 2 años, 3 Viudx, 4 Separadx/Divorciadx, 5 Solterx, 6 Casadx)
+* **P6071:** Cónyuge vive en hogar? (1 Si, 2 No)
+* **P6071S1:** N° Orden cónyuge
+* **P756:** Dónde nació? (1 Este municipio, 2 Otro municipio, 3 Otro país)
+* **P756S1:** Departamento de nacimiento
+* **P756S2:** Municipio de nacimiento
+* **P756S3:** País de nacimiento (1 USA, 2 España, 3 Venezuela, 4 Ecuador, 5 Panamá, 6 Perú, 7 Costa Rica, 8 Argentina, 9 Francia, 10 Italia, 11 Otro)
+* **P6074:** Siempre ha vivido en este municipio? (1 Si 2 No)
+* **P767:** Cuántos años continuos vive en el municipio?
+* **P6076:** Antes de venir al municipio, vivía en (1 Otro país, 2 Otro municipio)
+* **P6076S1:** Antes vivía en: Departamento
+* **P6076S2:** Antes vivía en: Municipio
+* **P6077:** Vivía en (1 Centro urbano, 2 Rural)
+* **P6096:** Razón cambio de residencia (1 Dificultad para trabajo, 2 Desastre natural, 3 Violencia, 4 Educación, 5 Pareja, 6 Salud, 7 Mejorar la localización, 8 Mejor trabajo, 9 Acompañamiento hogar, 10 Adquisición de vivienda, 11 Mejor calidad de vida, 12 Otro)
+* **P6081:** El padre vive en el hogar? (1 Si, 2 No, 3 Fallecido)
+* **P6081S1:** N° orden padre
+* **P6087:** Nivel educación padre (1 Primaria incompleta, 2 Primaria completa, 3 Secundaria incompleta, 4 Secundaria completa, 5 Técnica/Tecnológica incompleta, 6 Técnica/Tecnológica completa, 7 Universidad incompleta, 8 Universidad completa, 9 Ninguno, 10 No sabe)
+* **P6083:** La madre vive en el hogar? (1 Si, 2 No, 3 Fallecida)
+* **P6083S1:** N° orden madre
+* **P6088:** Nivel educación madre (1 Primaria incompleta, 2 Primaria completa, 3 Secundaria incompleta, 4 Secundaria completa, 5 Técnica/Tecnológica incompleta, 6 Técnica/Tecnológica completa, 7 Universidad incompleta, 8 Universidad completa, 9 Ninguno, 10 No sabe)
+* **P6080:** Etnia (1 Indígenx, 2 Gitanx, 3 Raizal archipiélago, 4 Palenquerx, 5 Afrodescendiente, 6 Ninguno)
+* **P5667:** A cuál pueblo o etnia indigena pertenece?
+* **P2057:** Se considera campesino? (1 Si, 2 No, 3 No informa)
+* **P2059:** Alguna vez fue campesino? (1 Si, 2 No, 3 No informa)
+* **P2061:** Comunidad campesina? (1 Si, 2 No, 3 No informa)
+* **P1895:** Satisfacción vida (0-10)
+* **P1896:** Satisfacción ingreso (0-10)
+* **P1897:** Satisfacción salud (0-10)
+* **P1898:** Satisfacción seguridad (0-10)
+* **P1899:** Satisfacción trabajo (0-10)
+* **P3175:** Satisfacción tiempo libre (0-10)
+* **P1901:** Qué tan feliz se sintió ayer? (0-10)
+* **P1903:** Qué tan preocupadx se sintió ayer? (0-10)
+* **P1904:** Qué tan triste se sintió ayer? (0-10)
+* **P1905:** Qué tanto considera que las cosas que hace valen la pena? (0-10)
+* **P1927:** En cuál escalón se encuentra (0-10)
+
+```{r lectura_bd}
+df <- read.csv('data.csv', sep=';')
+edad_max_ninxs <- 12
+edad_min_abuelxs <- 60
+
+# PRE-PROCESAMIENTO & LIMPIEZA DE DATOS
+df$P6074[is.na(df$P6074)] <- 1
+df$P756S3[is.na(df$P756S3)] <- 11
+df$P6096[is.na(df$P6096)] <- 12
+df$P6051[is.na(df$P6051)] <- 14
+
+df[c('P756S1', 'P756S2', 'P5667')][is.na(df[c('P756S1', 'P756S2', 'P5667')])] <- "na"
+df[c('P6020', 'P6040', 'P6071S1', 'P756', 'P6076', 'P6076S1', 'P6076S2', 'P6081S1', 'P6083S1')][is.na(df[c('P6020', 'P6040', 'P6071S1', 'P756', 'P6076', 'P6076S1', 'P6076S2', 'P6081S1', 'P6083S1')])] <- 0
+df[c('P6077', 'P6081', 'P6083', 'P6071', 'P6034')][is.na(df[c('P6077', 'P6081', 'P6083', 'P6071', 'P6034')])] <- 2
+df[c('P2057', 'P2059', 'P2061')][is.na(df[c('P2057', 'P2059', 'P2061')])] <- 3
+df[c('P1894', 'P5502', 'P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175', 'P1901', 'P1903', 'P1904', 'P1905', 'P1927')][is.na(df[c('P1894', 'P5502', 'P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175', 'P1901', 'P1903', 'P1904', 'P1905', 'P1927')])] <- 5
+df$P6080[is.na(df$P6080)] <- 6
+df[c('P6087', 'P6088')][is.na(df[c('P6087', 'P6088')])] <- "na"
+
+
+df_ninxs <- df[df$P6040 <= edad_max_ninxs, ]
+df_abuelxs <- df[df$P6040 >= edad_min_abuelxs, ]
+
+df_ninxs$P767[is.na(df_ninxs$P767)] <- mean(df_ninxs$P767)
+df_abuelxs$P767[is.na(df_abuelxs$P767)] <- mean(df_abuelxs$P767)
+```
+
+```{r summary_niñxs}
+skim(df_ninxs)
+```
+
+```{r summary_abuelxs}
+skim(df_abuelxs)
+```
+
+```{r colores}
+cols = c('darkcyan', 'darkkhaki', 'brown3', 'darkorange1', 'darkorchid', 'burlywood4', 'chartreuse3', 'darkgoldenrod2', 'dodgerblue', 'forestgreen', 'lightcoral', 'darkslateblue', 'indianred', 'steelblue', 'darkorchid')
+```
+
+# Agregar variables
+
+Se pueden agregar variables como número de niñxs en el hogar, número de abuelxs, número de adultxs
+
+# Análisis exploratorio
+
+## Edad {.tabset .tabset-fade}
+
+### Niñxs
+
+```{r edad_niñxs}
+tbl <- with(df_ninxs, table(P6040))
+barp <- barplot(tbl, beside=TRUE, col=cols, main='Número de personas por rango de edad', xlab='Edad (en años)', ylab='Número de personas', ylim=c(0, max(tbl)+200))
+
+text(barp, tbl + 25, labels = tbl)
+
+legend('top', fill=cols, legend=c(0:12), horiz=TRUE, cex=0.9, x.intersp=0.2, y.intersp=0.85)
+```
+
+Vemos que la mayoría de niñxs tienen 12 años (617), mientras que 1 año es la edad donde menos niñxs hay (416), sin embargo la distancia entre el número de niñxs por cada año no es muy grande, no hay una edad que destaque en el conjunto de datos.
+
+### Abuelxs {.tabset}
+
+#### Gráfico de barras
+
+```{r edad_abuelxs}
+df_abuelxs$group_edad <-ifelse(df_abuelxs$P6040 <= 65, 'A',
+                        ifelse(df_abuelxs$P6040 <= 70, 'B',
+                        ifelse(df_abuelxs$P6040 <= 75, 'C',
+                        ifelse(df_abuelxs$P6040 <= 80, 'D',
+                        ifelse(df_abuelxs$P6040 <= 105, 'E', NA)))))
+
+tbl <- with(df_abuelxs, table(group_edad))
+barp <- barplot(tbl, beside=TRUE, col=cols, main='Número de personas por rango de edad', xlab='Rango de edad (en años)', ylab='Número de personas', names.arg=c('60-65', '65-70', '70-75', '75-80', '>80'), ylim=c(0, max(tbl)+500))
+
+text(barp, tbl + 120, labels = tbl)
+
+legend('top', fill=cols, legend=c('60-65', '65-70', '70-75', '75-80', '>80'), horiz=TRUE, x.intersp=0.2, y.intersp=0.85)
+```
+
+#### Histograma
+
+```{r}
+hist(df_abuelxs$P6040, xlab='Edad', ylab='Frecuencia', main='Histograma de la edad', col='steelblue')
+```
+
+Para lxs abuelxs la mayoría se encuentra entre 60 y 65 años, a partir de ahí en cada grupo hay menos personas. Debido al número de personas mayores a 80 años, a partir de esta edad se agrupan en un único grupo y no se divide en intervalos de 5 años.
+
+## Satisfacción {.tabset .tabset-fade}
+
+### Niñxs
+
+Para el nivel de satisfacción de lxs niñxs, se llenó esta columna con el valor medio (5), por lo que no nos da información del nivel de satisfacción según la encuensta
+
+### Abuelxs
+
+Veremos el nivel de satisfacción de lxs abuelxs
+
+
+```{r}
+par(mfrow=c(2, 3))
+
+df_abuelxs$P1896 <- ifelse(df_abuelxs$P1896 == 99, 10, df_abuelxs$P1896)
+
+barp <- barplot(table(df_abuelxs$P1895), beside=TRUE, col=cols[1], main='Satisfacción Vida', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P1895) + 60, labels = table(df_abuelxs$P1895), cex=0.8)
+barp <- barplot(table(df_abuelxs$P1896), beside=TRUE, col=cols[2], main='Satisfacción Ingreso', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P1896) + 60, labels = table(df_abuelxs$P1896), cex=0.8)
+barp <- barplot(table(df_abuelxs$P1897), beside=TRUE, col=cols[3], main='Satisfacción Salud', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P1897) + 60, labels = table(df_abuelxs$P1897), cex=0.8)
+barp <- barplot(table(df_abuelxs$P1898), beside=TRUE, col=cols[4], main='Satisfacción Seguridad', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P1898) + 60, labels = table(df_abuelxs$P1898), cex=0.8)
+barp <- barplot(table(df_abuelxs$P1899), beside=TRUE, col=cols[5], main='Satisfacción Trabajo', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P1899) + 60, labels = table(df_abuelxs$P1899), cex=0.8)
+barp <- barplot(table(df_abuelxs$P3175), beside=TRUE, col=cols[6], main='Satisfacción Tiempo libre', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, 1300))
+text(barp, table(df_abuelxs$P3175) + 60, labels = table(df_abuelxs$P3175), cex=0.8)
+```
+
+Vemos que en lxs abuelxs, el nivel de satisfacción se encuentra mayoritariamente en 8, seguido por 10, por abajo de 8 se nota que, entre menos valor, menos número de personas, a excepción del nivel de satisfacción en el trabajo, que en 0 tiene 303 respuestas
+
+
+# Gráfico sin uso, usar en otras variables (Menos de 55 barras ~30)
+```{r}
+tbl1 <- with(df_abuelxs, table(P1895))
+tbl2 <- with(df_abuelxs, table(P1896))
+tbl3 <- with(df_abuelxs, table(P1897))
+tbl4 <- with(df_abuelxs, table(P1898))
+tbl5 <- with(df_abuelxs, table(P1899))
+tbl6 <- with(df_abuelxs, table(P3175))
+
+tbl <- rbind(tbl1, tbl2, tbl3, tbl4, tbl5, tbl6)
+
+barp <- barplot(tbl, beside=TRUE, col=cols[1:6], main='Nivel de satisfacción por tipo', xlab='Satisfacción (0-10)', ylab='Número de personas', ylim=c(0, max(tbl)+200))
+
+text(barp, tbl + 30, labels = tbl, cex=0.4)
+
+legend('topleft', fill=cols[1:6], legend=c('Vida', 'Ingreso', 'Salud', 'Seguridad', 'Trabajo', 'Tiempo libre'), cex=0.8, x.intersp=0.2, y.intersp=0.85)
+```
+
