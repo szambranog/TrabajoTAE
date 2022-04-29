@@ -21,7 +21,7 @@ library(skimr)
 library(ggplot2)
 library(reshape2)
 library(reticulate)
-use_python('/usr/bin/python3')
+#use_python('/usr/bin/python3')
 ```
 
 # Lectura de datos
@@ -35,11 +35,7 @@ import generar_dataframes
 reporte = """Para niñxs se tienen las siguientes variables: P6020, P6040, P6081, P6083, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P171, trabaja, dinero, P6160, P8586, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P51, P771, P772, P773, P58, actividad
 Para abuelxs se tienen las siguientes variables: P6020, P6040, P5502, P6071, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P6160, P8586, P8587, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P6426, P3193, dinero_trabajo, dinero_extra"""
 
-#reporte = generar_dataframes.generarDataFrame()
-```
-
-```{r Variables}
-cat(py$reporte)
+reporte = generar_dataframes.generarDataFrame()
 ```
 
 Además, se crean las variables:
