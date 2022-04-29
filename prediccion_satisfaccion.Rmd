@@ -21,7 +21,8 @@ library(skimr)
 library(ggplot2)
 library(reshape2)
 library(reticulate)
-#use_python('/usr/bin/python3')
+library(dplyr)
+use_python('/usr/bin/python3')
 ```
 
 # Lectura de datos
@@ -32,13 +33,13 @@ La definición de las variables que se consideran se puede encontrar en [Diccion
 ```{python lectura_bd}
 import generar_dataframes
 
-reporte = """Para niñxs se tienen las siguientes variables: P6020, P6040, P6081, P6083, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P171, trabaja, dinero, P6160, P8586, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P51, P771, P772, P773, P58, actividad
-Para abuelxs se tienen las siguientes variables: P6020, P6040, P5502, P6071, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P6160, P8586, P8587, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P6426, P3193, dinero_trabajo, dinero_extra"""
-
-reporte = generar_dataframes.generarDataFrame()
+generar_dataframes.generarDataFrame()
 ```
 
-Además, se crean las variables:
+Para niñxs se tienen las siguientes variables: P6020, P6040, P6081, P6083, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P171, trabaja, dinero, P6160, P8586, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P51, P771, P772, P773, P58, actividad
+Para abuelxs se tienen las siguientes variables: P6020, P6040, P5502, P6071, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P6160, P8586, P8587, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P6426, P3193, dinero_trabajo, dinero_extra
+
+Las variables creadas son:
 
 * **prom_satisfaccion:** Promedio de la satisfacción de la persona. LOs valores nulos son calculados como el promedio de la satisfacción del hogar
 * **num_ninxs:** Número de niñxs en el hogar
@@ -56,11 +57,11 @@ df_abuelxs = read.csv('abuelxs.csv')
 ```
 
 ```{r summary_niñxs}
-skim(df_ninxs)
+#skim(df_ninxs)
 ```
 
 ```{r summary_abuelxs}
-skim(df_abuelxs)
+#skim(df_abuelxs)
 ```
 
 ```{r colores}
@@ -208,8 +209,8 @@ Veremos como se comportan las variables referentes a la composición del hogar
 ### Niñxs
 
 ```{r}
-#nf <- layout(matrix(c(1, 2, 3, 4, 4, 4), nrow=2, byrow=TRUE))
-par(mfrow=c(2, 3))
+nf <- layout(matrix(c(1, 2, 3, 4, 4, 4), nrow=2, byrow=TRUE))
+#par(mfrow=c(2, 3))
 
 mytable <- table(df_ninxs$P6020)
 pie(mytable, col=cols[4:5], main='Piechart sexo', labels = '')
@@ -230,21 +231,45 @@ legend('bottomleft', fill=cols[4:5], legend=c('Padre', 'Madre'), cex=0.8, x.inte
 barp <- barplot(table(df_ninxs$P6080), beside=TRUE, col=cols[15], main='Etnia', names.arg = c('Indígena', 'Gitanx', 'Raizal', 'Palenquerx', 'Afro', 'Ninguna'), las=2, ylab='Número de personas', ylim=c(0, 7200))
 text(barp, table(df_ninxs$P6080) + 300, labels = table(df_ninxs$P6080), cex=0.8)
 
-barp <- barplot(table(df_ninxs$num_ninxs), beside=TRUE, col=cols[14], main='Número de niñxs', ylab='Número de personas', ylim=c(0, 4200))
-text(barp, table(df_ninxs$num_ninxs) + 300, labels = table(df_ninxs$num_ninxs), cex=0.8)
+df1 <- df_ninxs %>% count(num_ninxs)
+df2 <- df_ninxs %>% count(num_adultxs)
+df3 <- df_ninxs %>% count(num_abuelxs)
 
-barp <- barplot(table(df_ninxs$num_adultxs), beside=TRUE, col=cols[13], main='Número de personas 12-60', ylab='Número de personas', ylim=c(0, 7200))
-text(barp, table(df_ninxs$num_adultxs) + 300, labels = table(df_ninxs$num_adultxs), cex=0.8)
+colnames(df1) <- c('people', 'n')
+colnames(df2) <- c('people', 'n')
+colnames(df3) <- c('people', 'n')
 
-barp <- barplot(table(df_ninxs$num_abuelxs), beside=TRUE, col=cols[12], main='Número de abuelxs', ylab='Número de personas', ylim=c(0, 3200), las=2)
-text(barp, table(df_ninxs$num_abuelxs) + 300, labels = table(df_ninxs$num_abuelxs), cex=0.8)
+df_extra <- data.frame(people=c(1:16), n=0)
+df1 <- rbind(df1, df_extra)  
+df2 <- rbind(df2, df_extra)
+df3 <- rbind(df3, df_extra)
+
+df1_a <- df1 %>% group_by(people) %>% summarise(num_ninxs=sum(n)) %>% filter(people < 8)
+df2_a <- df2 %>% group_by(people) %>% summarise(num_adultxs=sum(n)) %>% filter(people < 8)
+df3_a <- df3 %>% group_by(people) %>% summarise(num_abuelxs=sum(n)) %>% filter(people < 8)
+
+df1_8 <- sum((df1 %>% filter(people >= 8))$n)
+df2_8 <- sum((df2 %>% filter(people >= 8))$n)
+df3_8 <- sum((df3 %>% filter(people >= 8))$n)
+
+df <- df1_a
+df['num_adultxs'] <- df2_a['num_adultxs']
+df['num_abuelxs'] <- df3_a['num_abuelxs']
+
+df <- rbind(df, c(8, df1_8, df2_8, df3_8))
+
+mx <- t(as.matrix(df[-1]))
+colnames(mx) <- df$people
+
+barp <- barplot(mx, beside=TRUE, col=cols[11:13], main='Número de personas por hogar', ylab='Frecuencia', xlab='Personas en el hogar', ylim=c(0, 6500), space=c(0.1, 0.4), names.arg=c(1, 2, 3, 4, 5, 6, 7, '>=8'))
+text(barp, mx + 300, labels = mx, cex=0.9)
+legend('topright', fill=cols[11:13], legend=c('Número de niñxs', 'Número de personas 12-60 años', 'Número de abuelxs'))
 ```
 
 ### Abuelxs
 
 ```{r}
-nf <- layout(matrix(c(1, 2, 3, 4, 5, 6, 7, 7), nrow=2, byrow=TRUE))
-#par(mfrow=c(2, 3))
+nf <- layout(matrix(c(1, 2, 3, 4, 5, 5, 5, 5), nrow=2, byrow=TRUE))
 
 mytable <- table(df_abuelxs$P6020)
 pie(mytable, col=cols[4:5], main='Piechart sexo', labels = '')
@@ -264,18 +289,87 @@ legend('bottom', fill=cols[7:9], legend=c(paste0('Si: ', mytable[1]), paste0('No
 barp <- barplot(table(df_abuelxs$P6080), beside=TRUE, col=cols[15], main='Etnia', names.arg = c('Indígena', 'Gitanx', 'Raizal', 'Palenquerx', 'Afro', 'Ninguna'), las=2, ylab='Número de personas', ylim=c(0, 8000))
 text(barp, table(df_abuelxs$P6080) + 300, labels = table(df_abuelxs$P6080))
 
-barp <- barplot(table(df_abuelxs$num_ninxs), beside=TRUE, col=cols[14], main='Número de niñxs', ylab='Número de personas', ylim=c(0, 6000))
-text(barp, table(df_abuelxs$num_ninxs) + 300, labels = table(df_abuelxs$num_ninxs), cex=0.8)
+df1 <- df_ninxs %>% count(num_ninxs)
+df2 <- df_ninxs %>% count(num_adultxs)
+df3 <- df_ninxs %>% count(num_abuelxs)
 
-barp <- barplot(table(df_abuelxs$num_adultxs), beside=TRUE, col=cols[13], main='Número de personas\n12-60 años', ylab='Número de personas', ylim=c(0, 6000))
-text(barp, table(df_abuelxs$num_adultxs) + 300, labels = table(df_abuelxs$num_adultxs), cex=0.8)
+colnames(df1) <- c('people', 'n')
+colnames(df2) <- c('people', 'n')
+colnames(df3) <- c('people', 'n')
 
-barp <- barplot(table(df_abuelxs$num_abuelxs), beside=TRUE, col=cols[12], main='Número de abuelxs', ylab='Número de personas', ylim=c(0, 3200), las=2)
-text(barp, table(df_abuelxs$num_abuelxs) + 300, labels = table(df_abuelxs$num_abuelxs), cex=0.8)
+df_extra <- data.frame(people=c(1:16), n=0)
+df1 <- rbind(df1, df_extra)  
+df2 <- rbind(df2, df_extra)
+df3 <- rbind(df3, df_extra)
+
+df1_a <- df1 %>% group_by(people) %>% summarise(num_ninxs=sum(n)) %>% filter(people < 8)
+df2_a <- df2 %>% group_by(people) %>% summarise(num_adultxs=sum(n)) %>% filter(people < 8)
+df3_a <- df3 %>% group_by(people) %>% summarise(num_abuelxs=sum(n)) %>% filter(people < 8)
+
+df1_8 <- sum((df1 %>% filter(people >= 8))$n)
+df2_8 <- sum((df2 %>% filter(people >= 8))$n)
+df3_8 <- sum((df3 %>% filter(people >= 8))$n)
+
+df <- df1_a
+df['num_adultxs'] <- df2_a['num_adultxs']
+df['num_abuelxs'] <- df3_a['num_abuelxs']
+
+df <- rbind(df, c(8, df1_8, df2_8, df3_8))
+
+mx <- t(as.matrix(df[-1]))
+colnames(mx) <- df$people
+
+barp <- barplot(mx, beside=TRUE, col=cols[11:13], main='Número de personas por hogar', ylab='Frecuencia', xlab='Personas en el hogar', ylim=c(0, 6500), space=c(0.1, 0.4), names.arg=c(1, 2, 3, 4, 5, 6, 7, '>=8'))
+text(barp, mx + 300, labels = mx, cex=0.9)
+legend('topright', fill=cols[11:13], legend=c('Número de niñxs', 'Número de personas 12-60 años', 'Número de abuelxs'))
 ```
+
+## Educación
+
+Vemos el comportamiento de las variables asociadas a la educación
+
+### Niñxs {.tabset}
 
 ```{r}
-summary(df_ninxs)
+par(mar = c(1, 1, 4, 1), mfrow=c(1, 2))
 
-# Datos composición
+mytable <- table(df_ninxs$P6160)
+text <- paste0(c('Si', 'No', 'No informa'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[1:3], main='Piechart sabe leer\ny escribir', labels='')
+legend('topleft', fill=cols[1:3], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+
+mytable <- table(df_ninxs$P8586)
+text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[4:5], main='Piechart Actualmente estudia?', labels='')
+legend('topleft', fill=cols[4:5], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
 ```
+
+### Abuelxs
+
+```{r}
+nf <- layout(matrix(c(1, 2, 1, 2, 3, 3, 3, 3, 3, 3), nrow=5, byrow=TRUE))
+
+mytable <- table(df_abuelxs$P6160)
+text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[6:7], main='Piechart sabe leer\ny escribir', labels='')
+legend('topleft', fill=cols[6:7], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+
+mytable <- table(df_abuelxs$P8586)
+text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[8:9], main='Piechart Actualmente estudia?', labels='')
+legend('topleft', fill=cols[8:9], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+
+valores <- c('No informa', 'Ninguno', 'Preescolar', 'Básica Primaria (1º - 5º)', 'Básica secundaria (6º--9º)', 'Media (10º--13º)', 'Técnico sin título', 'Técnico con título', 'Tecnológico sin título', 'Tecnológico con título', 'Universitario sin titulo', 'Universitario con titulo', 'Postgrado sin titulo', 'Postgrado con titulo')
+
+barp <- barplot(table(df_abuelxs$P8587), beside=TRUE, col=cols, main='Nivel educativo más alto', ylab='Número de personas', ylim=c(0, 5500))
+text(barp, table(df_abuelxs$P8587) + 200, labels = table(df_abuelxs$P8587), cex=1.2)
+
+legend('topright', fill=cols, legend=paste((0:13), valores), cex=0.9, ncol = 3)
+```
+
+Para lxs abuelxs, la variable **P8586** tiene un *98%* de las respuestas con que actualmente no estudian, por esta razón, esta variable se omitirá en el modelo
+
+```{r}
+df_abuelxs$P8586 <- NULL
+```
+

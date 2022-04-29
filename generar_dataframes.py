@@ -130,9 +130,9 @@ def generarDataFrame():
     eliminar = ['SECUENCIA_P', 'ORDEN', 'FEX_C', 'P6169', 'P6169S1', 'P8564', 'P8564S1', 'P8566', 'P8566S1', 'P8568', 'P8568S1', 'P6191', 'P6191S1', 'P8572', 'P8572S1', 'P8574', 'P8574S1', 'P8576', 'P8576S1', 'P55', 'P774', 'P774S1',
                 'P774S2', 'P774S3', 'P775', 'P776', 'P776S1', 'P776S2', 'P776S3', 'P58S1', 'P58S2', 'P777', 'P778', 'P779', 'P779S1', 'P779S2', 'P779S3', 'P779S11', 'P779S12', 'P779S5', 'P779S6', 'P779S7', 'P779S8', 'P779S13', 'P779S9']
 
-    posibles = []
+    posibles = ['P58']
 
-    dejar = ['P51', 'P771', 'P772', 'P773', 'P58']
+    dejar = ['P51', 'P771', 'P772', 'P773']
 
     # Se eliminan columnas que no se usarán
     df_aten = df_aten.drop(columns=eliminar)
