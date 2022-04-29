@@ -123,6 +123,12 @@ def generarDataFrame():
     df_sld['P6100'] = df_sld['P6100'].replace(r'^\s*$', 9, regex=True)
     df_sld = df_sld.astype(int)
 
+    df_sld['afiliado'] = df_sld['P6100']
+    df_sld.loc[df_sld['P6090'].eq(2), 'afiliado'] = 0
+    df_sld.loc[df_sld['P6090'].eq(9), 'afiliado'] = 9
+
+    df_sld = df_sld.drop(columns=['P6090', 'P6100'])
+
     # Atención Niños
     df_aten = pd.read_csv(
         'Datasets/Atencion integral de los niños y niñas menores de 5 años.csv', sep=';', decimal=',', header=0)
@@ -235,7 +241,8 @@ def generarDataFrame():
     df_abuelxs = df_abuelxs.drop(columns=no_abuelxs)
 
     df_ninxs = df_ninxs.drop(columns=['DIRECTORIO', 'SECUENCIA_ENCUESTA'])
-    df_abuelxs = df_abuelxs.drop(columns=['DIRECTORIO', 'SECUENCIA_ENCUESTA'])
+    df_abuelxs = df_abuelxs.drop(
+        columns=['DIRECTORIO', 'SECUENCIA_ENCUESTA'])
 
     df_ninxs[['P171', 'trabaja', 'dinero', 'P6160', 'P772', 'P773']] = \
         df_ninxs[['P171', 'trabaja', 'dinero',
