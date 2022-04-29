@@ -1,4 +1,3 @@
-
 import pandas as pd
 import numpy as np
 
@@ -107,32 +106,21 @@ def generarDataFrame():
 
     eliminar = ['SECUENCIA_P', 'ORDEN', 'FEX_C', 'P768', 'P6115', 'P5669', 'P5669S1', 'P798', 'P799', 'P1930S1', 'P1906', 'P1908', 'P1908S1', 'P1908S2', 'P1908S3', 'P1908S4', 'P1908S5', 'P1908S6', 'P1908S7', 'P1908S8', 'P5665', 'P6134', 'P8563', 'P1092', 'P8573', 'P8575', 'P8577', 'P770', 'P6153', 'P6199', 'P6199S1', 'P6145', 'P8554', 'P801', 'P8556', 'P8556S1', 'P8556S2', 'P8556S4', 'P8556S5', 'P8556S6', 'P8556S9', 'P8556S10', 'P6147', 'P6148', 'P6149', 'P3178', 'P3178S1', 'P3178S1A1', 'P3178S2', 'P3178S2A1', 'P3178S3', 'P3178S3A1', 'P3179',
                 'P3179S1', 'P3179S1A1', 'P3179S2', 'P3179S2A1', 'P3179S3', 'P3179S3A1', 'P3181', 'P3181S1', 'P3182', 'P3183', 'P3183S1', 'P3184', 'P3184S1', 'P3182S1', 'P3185', 'P3185S1', 'P3186', 'P3186S1', 'P3187S1', 'P3187S2', 'P3188', 'P3188S1', 'P3188S2', 'P3188S3', 'P3188S1A1', 'P3188S2A1', 'P3188S3A1', 'P3008', 'P3008S1A1', 'P3008S1A2', 'P1707S1', 'P3003S1', 'P6133', 'P8560', 'P8560S1', 'P8560S2', 'P8560S3', 'P8560S4', 'P8560S5', 'P3189', 'P3189S1', 'P3189S1A1', 'P3189S2', 'P3189S2A1', 'P8561', 'P6138', 'P5672', 'P5694', 'P5695', 'P6161', 'P1089',
-                'P1906S1', 'P1906S2', 'P1906S3', 'P1906S4', 'P1906S5', 'P1906S6', 'P1906S7', 'P1906S8','P1708','P1708S1']
+                'P1906S1', 'P1906S2', 'P1906S3', 'P1906S4', 'P1906S5', 'P1906S6', 'P1906S7', 'P1906S8', 'P1708', 'P1708S1']
 
     posibles = ['P6181', 'P6127', 'P1909', 'P1909S1', 'P1909S2', 'P1909S3',
-                'P1909S4', 'P1909S5', 'P1909S6', 'P6126', 'P6126S1', 'P6126S2', 'P6126S3']
+                'P1909S4', 'P1909S5', 'P1909S6', 'P6126', 'P6126S1', 'P6126S2', 'P6126S3',
+                'P8551', 'P799S2', 'P799S3', 'P799S1', 'P799S4', 'P799S5', 'P3176',
+                'P3008S1', 'P3008S2', 'P1707', 'P3003', 'P5452', 'P6161S1']
 
-    dejar = ['P6090', 'P768', 'P6100', 'P8551', 'P799S2', 'P799S3', 'P799S1', 'P799S4', 'P799S5', 'P3176',
-             'P1930']
+    dejar = ['P6090', 'P6100', 'P1930']
 
     # Se eliminan columnas que no se usarán
     df_sld = df_sld.drop(columns=eliminar)
     df_sld = df_sld.drop(columns=posibles)
 
-    # Se ajustan algunos resultados, se agregan miles
-    df_sld.loc[df_sld['P8551'].str.len().eq(2), 'P8551'] = \
-        df_sld['P8551'].loc[df_sld['P8551'].str.len().eq(2)] + '000'
-    df_sld.loc[df_sld['P3176'].str.len().eq(2), 'P3176'] = \
-        df_sld['P3176'].loc[df_sld['P3176'].str.len().eq(2)] + '000'
-
     # Se reemplazan los nulos según corresponda
     df_sld['P6100'] = df_sld['P6100'].replace(r'^\s*$', 9, regex=True)
-    df_sld[['P8551', 'P3176', 'P6161S1', ]] = \
-        df_sld[['P8551', 'P3176', 'P6161S1']
-               ].replace(r'^\s*$', 0, regex=True)
-    df_sld[['P3008S1', 'P3008S2', 'P1707', 'P3003',  'P5452']] = \
-        df_sld[['P3008S1', 'P3008S2', 'P1707', 'P3003', 'P5452']
-               ].replace(r'^\s*$', 2, regex=True)
     df_sld = df_sld.astype(int)
 
     # Atención Niños
@@ -260,8 +248,3 @@ def generarDataFrame():
 
     df_ninxs.to_csv('ninxs.csv', index=False)
     df_abuelxs.to_csv('abuelxs.csv', index=False)
-
-    string = f'Para niñxs se tienen las siguientes variables: {", ".join(df_ninxs.columns.to_list())}\n'
-    string += f'Para abuelxs se tienen las siguientes variables: {", ".join(df_abuelxs.columns.to_list())}\n'
-
-    return(string)
