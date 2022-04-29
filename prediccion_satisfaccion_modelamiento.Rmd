@@ -1,0 +1,131 @@
+---
+title: "prediccion_satisfaccion_modelamiento"
+author: "Grupo TAE"
+date: '2022-04-29'
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Modelamiento
+
+## Carga de los datos
+
+Se cargan los archivos con los datos (para abuelos y niños):
+
+```{r lectura_bd}
+dfa <- read.csv('abuelxs.csv', sep=',', dec='.')
+
+dfn <- read.csv('ninxs.csv', sep=',', dec='.')
+
+```
+
+Los datos de los niños se ven así
+
+```{r}
+head(dfn)
+```
+
+Los datos de los abuelos se ven así
+
+```{r}
+head(dfa)
+```
+
+
+## Implementación de KNN 
+
+En esta aproximación se usará el paquete `caret`.
+
+```{r}
+library(caret)
+```
+
+
+### Aproximación 1: Conjuntos de entrenamiento y validación:
+
+En esta aproximación se utiliza el 75% de los datos para entrenamiento y el 25% restante para validación.
+
+```{r aprox1_tr_vl}
+set.seed(202204) # se fija por reproducibilidad
+
+ctrl_1<-trainControl(method = "LGOCV",p=0.75,number = 1)
+
+aprox1_tr_vl<-train(prom_satisfaccion ~ edad_casa+dist_mrt+cant_tiendas,
+             data       = dfn,
+             method     = "knn",
+             preProcess = c("center","scale"),
+             tuneGrid   = expand.grid(k = 1:30),
+             trControl  = ctrl_1,
+             metric     = "RMSE")
+```
+
+
+```{r}
+plot(aprox1_tr_vl)
+```
+
+## Aproximación 2:  k-fold cross validation
+
+```{r aprox2_cv_5}
+set.seed(202204) # se fija por reproducibilidad
+
+ctrl_2<-trainControl(method = "cv",number = 20)
+
+aprox2_cv_5<-train(precio_por_unidad_area ~ edad_casa+dist_mrt+cant_tiendas,
+             data       = datos,
+             method     = "knn",
+             preProcess = c("center","scale"),
+             tuneGrid   = expand.grid(k = 1:30),
+             trControl  = ctrl_2,
+             metric     = "RMSE")
+```
+
+```{r}
+plot(aprox2_cv_5)
+```
+
+
+
+
+```{r}
+k <- aprox2_cv_5$results$k
+RMSE <-  aprox2_cv_5$results$RMSE
+RMSESD <-  aprox2_cv_5$results$RMSESD
+plot(k,RMSE,las=1,type="b",col="blue",lwd=2,ylim=c(7.8,8.8))
+# lines(k,RMSE+1.96*RMSESD,type="p",col="red",lwd=2)
+# lines(k,RMSE-1.96*RMSESD,type="p",col="red",lwd=2) 
+grid()
+```
+
+
+
+Para crear el modelo final se usan todos los datos:
+
+Preprocesamiento de los datos:
+
+```{r}
+X_escalanatural <- subset(datos,select=c(edad_casa,dist_mrt,cant_tiendas))
+Y <- datos$precio_por_unidad_area
+X_centrada <- scale(X_escalanatural,center = TRUE, scale = TRUE)
+media_total <- attr(X_centrada,'scaled:center')
+desv_est_total <- attr(X_centrada,'scaled:scale')
+```
+
+Creación del modelo KNN con K=4 vecinos:
+
+```{r}
+modelo_knn_k4 <- knnreg(x=X_centrada,y=Y,k=4)
+```
+
+
+
+## Guardado de los elementos para ejecutar el modelo:
+
+```{r}
+save(file="modeloknn.RData",list=c("modelo_knn_k4",
+                                   "media_total",
+                                   "desv_est_total"))
+```
