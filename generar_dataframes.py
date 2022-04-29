@@ -237,9 +237,9 @@ def generarDataFrame():
     df_ninxs = df_ninxs.drop(columns=['DIRECTORIO', 'SECUENCIA_ENCUESTA'])
     df_abuelxs = df_abuelxs.drop(columns=['DIRECTORIO', 'SECUENCIA_ENCUESTA'])
 
-    df_ninxs[['P171', 'trabaja', 'dinero', 'P6160', 'P772', 'P773', 'P58']] = \
+    df_ninxs[['P171', 'trabaja', 'dinero', 'P6160', 'P772', 'P773']] = \
         df_ninxs[['P171', 'trabaja', 'dinero',
-                  'P6160', 'P772', 'P773', 'P58']].fillna(0)
+                  'P6160', 'P772', 'P773']].fillna(0)
 
     df_ninxs['P8586'] = df_ninxs['P8586'].fillna(2)
     df_ninxs['P51'] = df_ninxs['P51'].fillna(8)
