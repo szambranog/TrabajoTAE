@@ -22,6 +22,7 @@ library(ggplot2)
 library(reshape2)
 library(reticulate)
 library(dplyr)
+library(knitr)
 use_python('/usr/bin/python3')
 ```
 
@@ -70,7 +71,7 @@ cols = c('darkcyan', 'darkkhaki', 'brown3', 'darkorange1', 'darkorchid', 'burlyw
 
 # Análisis exploratorio
 
-## Edad {.tabset .tabset-fade}
+## Edad {.tabset}
 
 ### Niñxs
 
@@ -202,20 +203,20 @@ df_abuelxs[c('P1895', 'P1896', 'P1897', 'P1898', 'P1899', 'P3175')] <- NULL
 ```
 
 
-## Composición del hogar {.tabset}
+## Composición del hogar {.tabset .tabset-fade}
 
 Veremos como se comportan las variables referentes a la composición del hogar
 
 ### Niñxs
 
-```{r}
+```{r comp_ninxs}
 nf <- layout(matrix(c(1, 2, 3, 4, 4, 4), nrow=2, byrow=TRUE))
 #par(mfrow=c(2, 3))
 
 mytable <- table(df_ninxs$P6020)
 pie(mytable, col=cols[4:5], main='Piechart sexo', labels = '')
 
-legend('topleft', fill=cols[4:5], legend=c(paste0('Hombre: ', mytable[1]), paste0('Mujer: ', mytable[2])), cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('topleft', fill=cols[4:5], legend=c(paste0('Hombre: ', mytable[1]), paste0('Mujer: ', mytable[2])), x.intersp=0.2, y.intersp=0.85)
 
 tbl1 <- with(df_ninxs, table(P6081))
 tbl2 <- with(df_ninxs, table(P6083))
@@ -226,7 +227,7 @@ barp <- barplot(tbl, beside=TRUE, col=cols[4:5], main='Vive con padres', xlab='S
 
 text(barp, tbl + 300, labels = tbl, cex=0.9)
 
-legend('bottomleft', fill=cols[4:5], legend=c('Padre', 'Madre'), cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottomleft', fill=cols[4:5], legend=c('Padre', 'Madre'), x.intersp=0.2, y.intersp=0.85)
 
 barp <- barplot(table(df_ninxs$P6080), beside=TRUE, col=cols[15], main='Etnia', names.arg = c('Indígena', 'Gitanx', 'Raizal', 'Palenquerx', 'Afro', 'Ninguna'), las=2, ylab='Número de personas', ylim=c(0, 7200))
 text(barp, table(df_ninxs$P6080) + 300, labels = table(df_ninxs$P6080), cex=0.8)
@@ -268,13 +269,13 @@ legend('topright', fill=cols[11:13], legend=c('Número de niñxs', 'Número de p
 
 ### Abuelxs
 
-```{r}
+```{r comp_abuelxs}
 nf <- layout(matrix(c(1, 2, 3, 4, 5, 5, 5, 5), nrow=2, byrow=TRUE))
 
 mytable <- table(df_abuelxs$P6020)
 pie(mytable, col=cols[4:5], main='Piechart sexo', labels = '')
 
-legend('bottom', fill=cols[4:5], legend=c(paste0('Hombre: ', mytable[1]), paste0('Mujer: ', mytable[2])), cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottom', fill=cols[4:5], legend=c(paste0('Hombre: ', mytable[1]), paste0('Mujer: ', mytable[2])), x.intersp=0.2, y.intersp=0.85)
 
 barp <- barplot(table(df_abuelxs$P5502), beside=TRUE, col=cols[9:15], main='Situación sentimental', ylab='Número de personas', ylim=c(0, 7200), xaxt='n')
 text(barp, table(df_abuelxs$P5502) + 300, labels = table(df_abuelxs$P5502), cex=0.8)
@@ -324,52 +325,155 @@ text(barp, mx + 300, labels = mx, cex=0.9)
 legend('topright', fill=cols[11:13], legend=c('Número de niñxs', 'Número de personas 12-60 años', 'Número de abuelxs'))
 ```
 
-## Educación
+## Educación {.tabset .tabset-fade}
 
 Vemos el comportamiento de las variables asociadas a la educación
 
-### Niñxs {.tabset}
+### Niñxs
 
-```{r}
+```{r edu_ninxs}
 par(mar = c(1, 1, 4, 1), mfrow=c(1, 2))
 
 mytable <- table(df_ninxs$P6160)
 text <- paste0(c('Si', 'No', 'No informa'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
 pie(mytable, col=cols[1:3], main='Piechart sabe leer\ny escribir', labels='')
-legend('topleft', fill=cols[1:3], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottomleft', fill=cols[1:3], legend=text, x.intersp=0.2, y.intersp=0.85)
 
 mytable <- table(df_ninxs$P8586)
 text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
 pie(mytable, col=cols[4:5], main='Piechart Actualmente estudia?', labels='')
-legend('topleft', fill=cols[4:5], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottomleft', fill=cols[4:5], legend=text, x.intersp=0.2, y.intersp=0.85)
 ```
 
 ### Abuelxs
 
-```{r}
+```{r edu_abuelxs}
 nf <- layout(matrix(c(1, 2, 1, 2, 3, 3, 3, 3, 3, 3), nrow=5, byrow=TRUE))
 
 mytable <- table(df_abuelxs$P6160)
 text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
 pie(mytable, col=cols[6:7], main='Piechart sabe leer\ny escribir', labels='')
-legend('topleft', fill=cols[6:7], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottomleft', fill=cols[6:7], legend=text, x.intersp=0.2, y.intersp=0.85)
 
 mytable <- table(df_abuelxs$P8586)
 text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
 pie(mytable, col=cols[8:9], main='Piechart Actualmente estudia?', labels='')
-legend('topleft', fill=cols[8:9], legend=text, cex=0.8, x.intersp=0.2, y.intersp=0.85)
+legend('bottomleft', fill=cols[8:9], legend=text, x.intersp=0.2, y.intersp=0.85)
 
 valores <- c('No informa', 'Ninguno', 'Preescolar', 'Básica Primaria (1º - 5º)', 'Básica secundaria (6º--9º)', 'Media (10º--13º)', 'Técnico sin título', 'Técnico con título', 'Tecnológico sin título', 'Tecnológico con título', 'Universitario sin titulo', 'Universitario con titulo', 'Postgrado sin titulo', 'Postgrado con titulo')
 
 barp <- barplot(table(df_abuelxs$P8587), beside=TRUE, col=cols, main='Nivel educativo más alto', ylab='Número de personas', ylim=c(0, 5500))
-text(barp, table(df_abuelxs$P8587) + 200, labels = table(df_abuelxs$P8587), cex=1.2)
+text(barp, table(df_abuelxs$P8587) + 300, labels = table(df_abuelxs$P8587), cex=1.4)
 
-legend('topright', fill=cols, legend=paste((0:13), valores), cex=0.9, ncol = 3)
+legend('topright', fill=cols, legend=paste((0:13), valores), ncol = 2)
 ```
 
 Para lxs abuelxs, la variable **P8586** tiene un *98%* de las respuestas con que actualmente no estudian, por esta razón, esta variable se omitirá en el modelo
 
-```{r}
+```{r del_P8586}
 df_abuelxs$P8586 <- NULL
+```
+
+## Salud {.tabset .tabset-fade}
+
+Veremos como se comportan las variables de salud
+
+### Niñxs
+
+```{r sal_ninxs}
+nf <- layout(matrix(c(1, 1, 2), nrow=1))
+
+barp <- barplot(table(df_ninxs$afiliado), beside=TRUE, col=cols, main='Afiliación a Salud', ylab='Número de personas', ylim=c(0, 6500), names.arg=c('No afiliado', 'Contributivo\n(EPS)', 'Especial', 'Subsidiado\n(EPS-S)', 'No sabe/\nNo informa'), xlab='Tipo de afiliación')
+text(barp, table(df_ninxs$afiliado) + 300, labels = table(df_ninxs$afiliado), cex=1.4)
+
+mytable <- table(df_ninxs$P1930)
+text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[10:11], main='Piechart tiene una\nenfermedad crónica?', labels='')
+legend('bottom', fill=cols[10:11], legend=text, x.intersp=0.2, y.intersp=0.85)
+```
+
+### Abuelxs
+
+```{r sal_abuelxs}
+nf <- layout(matrix(c(1, 1, 2), nrow=1))
+
+barp <- barplot(table(df_abuelxs$afiliado), beside=TRUE, col=cols, main='Afiliación a Salud', ylab='Número de personas', ylim=c(0, 6500), names.arg=c('No afiliado', 'Contributivo\n(EPS)', 'Especial', 'Subsidiado\n(EPS-S)', 'No sabe/\nNo informa'), xlab='Tipo de afiliación')
+text(barp, table(df_abuelxs$afiliado) + 300, labels = table(df_abuelxs$afiliado), cex=1.4)
+
+mytable <- table(df_abuelxs$P1930)
+text <- paste0(c('Si', 'No'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[12:13], main='Piechart tiene una\nenfermedad crónica?', labels='')
+legend('bottom', fill=cols[12:13], legend=text, x.intersp=0.2, y.intersp=0.85)
+```
+
+## Variables exclusivas {.tabset .tabset-fade}
+
+### Niñxs
+
+#### Trabajo infantil
+
+```{r trab_inf}
+df <- df_ninxs %>% group_by(trabaja, dinero, P171) %>% count(dinero)
+
+df$trabaja <- ifelse(df$trabaja == 1, 'Si', 'No')
+kable(df, "pipe", col.names = c('Trabaja', 'Dinero ganado', 'Horas trabajadas', 'N° niñxs'))
+```
+
+Ya que solo el 0.06% de lxs niñxs trabajan, estas variables no aportan mucho al modelo, por lo que se eliminarán
+
+```{r del_trab_inf}
+df_ninxs[c('trabaja', 'dinero', 'P171')] <- NULL
+```
+
+#### Atención integral niñxs
+
+```{r aten}
+nf <- layout(matrix(c(1, 2, 3, 4, 1, 2, 3, 4, 5, 5, 5, 5, 5, 5, 5, 5), nrow=4, byrow=TRUE))
+
+valores <- c('Jardín', '(P|M)adre\nen casa', '(P|M)adre\nen trabajo', 'Empleadx\nen casa', 'Pariente +18', 'Pariente -18', 'Otro')
+barp <- barplot(table(df_ninxs$P51), beside=TRUE, col=cols, main='Con quién permanece', ylab='Número de personas', ylim=c(0, 6500), names.arg=valores, las=2)
+text(barp, table(df_ninxs$P51) + 300, labels = table(df_ninxs$P51), cex=0.8)
+
+mytable <- table(df_ninxs$P771)
+text <- paste0(c('Si', 'No', 'No sabe'), ': ', mytable, ' - ', round(mytable/sum(mytable)*100, 2), '%')
+pie(mytable, col=cols[13:15], main='Piechart la persona tiene\nformación en crianza?', labels='')
+legend('bottom', fill=cols[13:15], legend=text, x.intersp=0.2, y.intersp=0.85, cex=0.6)
+
+valores <- c('No informa', 'No cerca', 'Costoso', 'No cupo', 'Prefiere\nno asistir', 'Familiar\nle cuida', 'No está\nen edad', 'Algunas\nhoras/días', 'Otro')
+
+barp <- barplot(table(df_ninxs$P772), beside=TRUE, col=cols, main='Por qué no asiste\na jardín', ylab='Número de personas', ylim=c(0, 7000), names.arg=valores, las=2, cex.names = 0.8)
+text(barp, table(df_ninxs$P772) + 300, labels = table(df_ninxs$P772), cex=0.8)
+
+valores <- c('No informa', 'Hogar\ncomunitario', 'Hogar\ninfantil', 'Centro\nDesarrollo', 'Oficial', 'Público')
+
+barp <- barplot(table(df_ninxs$P773), beside=TRUE, col=cols, main='Tipo de establecimiento', ylab='Número de personas', ylim=c(0, 8500), names.arg=valores, las=2, cex.names=0.8)
+text(barp, table(df_ninxs$P773) + 300, labels = table(df_ninxs$P773), cex=0.8)
+
+barp <- barplot(table(df_ninxs$actividad), beside=TRUE, col=cols, main='Frecuencia otras\nactividades', ylab='Número de personas', ylim=c(0, 6500), xaxt='n')
+text(barp, table(df_ninxs$actividad) + 300, labels = table(df_ninxs$actividad))
+
+valores <- c('Todos los días', 'Una vez por semana, no cada día', 'Una vez al mes, no cada semana', 'Una vez al mes, no todos los meses', 'No realiza/No informa')
+
+legend('top', fill=cols, legend=valores, cex=0.9)
+```
+
+### Abuelxs
+
+#### Fuerza de trabajo
+```{r trab_abu}
+par(mfrow=c(1, 3))
+df_abuelxs$dinero_trabajo <- df_abuelxs$dinero_trabajo/1000000
+df_abuelxs$dinero_extra <- df_abuelxs$dinero_extra/1000000
+
+h <- hist(df_abuelxs$P6426, xlab='Meses', ylab='Frecuencia', main='Histograma de meses trabajando', col=cols[8], ylim=c(0, 9000), labels=TRUE)
+h <- hist(df_abuelxs$dinero_trabajo, xlab='Dinero ($ en millones)', ylab='Frecuencia', main='Histograma de dinero\npor trabajo', col=cols[9], ylim=c(0, 9000), labels=TRUE)
+
+h <- hist(df_abuelxs$dinero_extra, xlab='Dinero ($ en millones)', ylab='Frecuencia', main='Histograma de dinero extra', col=cols[10], ylim=c(0, 9000), labels=TRUE)
+```
+
+Debido a que la mayoría de respuestas es que lxs abuelxs no trabajan y no reciben ingresos por trabajo, estas variables se eliminarán del modelo
+
+```{r}
+df_ninxs[c('P6426', 'dinero_trabajo', 'dinero_extra')] <- NULL
 ```
 

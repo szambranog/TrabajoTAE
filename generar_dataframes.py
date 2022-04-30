@@ -151,15 +151,14 @@ def generarDataFrame():
     df_aten['P773'] = df_aten['P773'].replace(r'^\s*$', 0, regex=True)
     df_aten[['P779S1A1', 'P779S2A1', 'P779S3A1', 'P779S11A1', 'P779S12A1', 'P779S5A1', 'P779S6A1', 'P779S7A1', 'P779S8A1', 'P779S13A1', 'P779S9A2', 'P779S14']] = \
         df_aten[['P779S1A1', 'P779S2A1', 'P779S3A1', 'P779S11A1', 'P779S12A1', 'P779S5A1', 'P779S6A1',
-                 'P779S7A1', 'P779S8A1', 'P779S13A1', 'P779S9A2', 'P779S14']].replace(r'^\s*$', 0, regex=True)
+                 'P779S7A1', 'P779S8A1', 'P779S13A1', 'P779S9A2', 'P779S14']].replace(r'^\s*$', 5, regex=True)
     df_aten = df_aten.astype(int)
 
     # Se crea una columna donde especifica cada cuanto hace alguna actividad diferente
-    df_aten.loc[df_aten['P779S14'].eq(1), 'P779S14'] = 5
+    df_aten.loc[df_aten['P779S14'].eq(5), 'P779S14'] = 5
     df_aten['actividad'] = \
         df_aten[['P779S1A1', 'P779S2A1', 'P779S3A1', 'P779S11A1', 'P779S12A1', 'P779S5A1',
                  'P779S6A1', 'P779S7A1', 'P779S8A1', 'P779S13A1', 'P779S9A2', 'P779S14']].min(axis=1)
-
     # Se eliminan columnas que no se usarán
     df_aten = df_aten.drop(columns=['P779S1A1', 'P779S2A1', 'P779S3A1', 'P779S11A1', 'P779S12A1',
                                     'P779S5A1', 'P779S6A1', 'P779S7A1', 'P779S8A1', 'P779S13A1', 'P779S9A2', 'P779S14'])
@@ -169,7 +168,7 @@ def generarDataFrame():
                             sep=';', decimal=',', header=0)
 
     eliminar = ['SECUENCIA_P', 'ORDEN', 'FEX_C', 'P6230', 'P6240', 'P6250', 'P6260', 'P6270', 'P6280', 'P6300', 'P6330', 'P6340', 'P6351', 'P6370S2', 'P6390S2', 'P6435', 'P6440', 'P6450', 'P6460', 'P6460S1', 'P6990', 'P8622', 'P8624', 'P6595', 'P6605', 'P6605', 'P6623', 'P6615', 'P8626', 'P8626S1', 'P8628', 'P8628S1', 'P8630', 'P8630S1', 'P8631', 'P8631S1', 'P1087', 'P1087S1', 'P1087S1A1', 'P1087S2', 'P1087S2A1', 'P1087S3', 'P1087S3A1', 'P1087S4', 'P1087S4A1', 'P1087S5', 'P1087S5A1', 'P8632', 'P8634', 'P6885', 'P6886', 'P415', 'P416', 'P6830', 'P3193S1', 'P3193S2',
-                'P3193S3', 'P3193S4', 'P1709', 'P1709S1', 'P1709S2', 'P1709S3', 'P1709S4', 'P1709S5', 'P1709S6', 'P1709S7', 'P1709S8', 'P1709S9', 'P1709S10', 'P1709S11', 'P1709S12', 'P8636', 'P7250', 'P7310', 'P7270S2', 'P8640', 'P8640S1', 'P6920', 'P6935', 'P8642', 'P8642S1', 'P8644', 'P8644S1', 'P8646', 'P8650', 'P8650S1', 'P8652', 'P8654', 'P421', 'P421S1', 'P421S1A1', 'P421S2', 'P421S2A1', 'P421S3', 'P421S3A1', 'P421S4', 'P421S4A1', 'P421S5', 'P421S5A1', 'P421S6', 'P421S6A1', 'P421S7', 'P421S7A1', 'P421S8', 'P421S8A1', 'P421S9', 'P421S9A1', 'P421S10', 'P421S10A1', 'P8648', 'P550']
+                'P3193S3', 'P3193S4', 'P1709', 'P1709S1', 'P1709S2', 'P1709S3', 'P1709S4', 'P1709S5', 'P1709S6', 'P1709S7', 'P1709S8', 'P1709S9', 'P1709S10', 'P1709S11', 'P1709S12', 'P8636', 'P7250', 'P7310', 'P7270S2', 'P8640', 'P8640S1', 'P6920', 'P6935', 'P8642', 'P8642S1', 'P8644', 'P8644S1', 'P8646', 'P8650', 'P8650S1', 'P8652', 'P8654', 'P421', 'P421S1', 'P421S1A1', 'P421S2', 'P421S2A1', 'P421S3', 'P421S3A1', 'P421S4', 'P421S4A1', 'P421S5', 'P421S5A1', 'P421S6', 'P421S6A1', 'P421S7', 'P421S7A1', 'P421S8', 'P421S8A1', 'P421S9', 'P421S9A1', 'P421S10', 'P421S10A1', 'P8648', 'P550', 'P3193']
 
     posibles = ['P6320']
 
@@ -182,7 +181,6 @@ def generarDataFrame():
 
     # Se reemplazan los nulos según corresponda
     df_fuerza = df_fuerza.replace(r'^\s*$', 0, regex=True)
-    df_fuerza['P3193'] = df_fuerza['P3193'].replace(0, 2, regex=True)
     df_fuerza = df_fuerza.astype(int)
 
     # Se agregan dos columnas, con el dinero ganado
