@@ -19,7 +19,6 @@ Se cargan los archivos con los datos (para abuelos y niños):
 dfa <- read.csv('abuelxs.csv', sep=',', dec='.')
 
 dfn <- read.csv('ninxs.csv', sep=',', dec='.')
-
 ```
 
 Los datos de los niños se ven así
@@ -39,14 +38,14 @@ Los datos de los niños se ven así
 ##"num_adultxs"       Número de adultos en el hogar
 ##"num_abuelxs"       Número de abuelos en el hogar
 ##"P6160"             Sabe ler y escribir
-##"P8586"             Estudia
-##"P6100"             Regimen seguridad social
+##"P8586"               Estudia
+##"afiliado"            Regimen seguridad social
 ##"P1930"             Enfermedad Cronica
 ##"P51"               con quien permanece en la semana
 ##"P771"              Sabe de crianza
 ##"P772"              Xq no va a un estableciento 
 ##"P773"              Tipo de estableciento
-##"actividad"         
+##"actividad"         Frecuencia con la que realiza una actividad      
 head(df_ninxs)
 ```
 
@@ -89,7 +88,6 @@ Primero se realiza para los niñxs
 library(caret)
 ```
 
-
 ### Aproximación 1: Conjuntos de entrenamiento y validación niños:
 
 En esta aproximación se utiliza el 75% de los datos para entrenamiento y el 25% restante para validación.
@@ -99,7 +97,7 @@ set.seed(202204) # se fija por reproducibilidad
 
 ctrl_1_a<-trainControl(method = "LGOCV",p=0.75,number = 1)
 
-aprox1_tr_n_vl<-train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P6100 + P1930 + P51 + P771 + P772 + P773 + actividad,
+aprox1_tr_n_vl <- train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P1930 + afiliado + P51 + P771 + P772 + P773 + actividad,
              data       = df_ninxs,
              method     = "knn",
              preProcess = c("center","scale"),
@@ -107,7 +105,6 @@ aprox1_tr_n_vl<-train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 
              trControl  = ctrl_1_a,
              metric     = "RMSE")
 ```
-
 
 ```{r}
 plot(aprox1_tr_n_vl)
@@ -120,7 +117,7 @@ set.seed(202204) # se fija por reproducibilidad
 
 ctrl_2_n<-trainControl(method = "cv",number = 20)
 
-aprox2_cv_n_5<-train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P6100 + P1930 + P51 + P771 + P772 + P773 + actividad,
+aprox2_cv_n_5 <- train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P1930 + afiliado + P51 + P771 + P772 + P773 + actividad,
              data       = df_ninxs,
              method     = "knn",
              preProcess = c("center","scale"),
@@ -133,31 +130,26 @@ aprox2_cv_n_5<-train(prom_satisfaccion ~ P6020 + P6040 + P6081 + P6083 + P6080 +
 plot(aprox2_cv_n_5)
 ```
 
-
-
-
 ```{r}
 k <- aprox2_cv_n_5$results$k
 RMSE <-  aprox2_cv_n_5$results$RMSE
 RMSESD <-  aprox2_cv_n_5$results$RMSESD
-plot(k,RMSE,las=1,type="b",col="blue",lwd=2,ylim=c(7.8,8.8))
-# lines(k,RMSE+1.96*RMSESD,type="p",col="red",lwd=2)
-# lines(k,RMSE-1.96*RMSESD,type="p",col="red",lwd=2) 
+plot(k,RMSE,las=1,type="b",col="blue",lwd=2)
+lines(k,RMSE+1.96*RMSESD,type="p",col="red",lwd=2)
+lines(k,RMSE-1.96*RMSESD,type="p",col="red",lwd=2) 
 grid()
 ```
-
-
 
 Para crear el modelo final se usan todos los datos:
 
 Preprocesamiento de los datos:
 
 ```{r}
-X_escalanatural <- subset(datos,select=c(edad_casa,dist_mrt,cant_tiendas))
-Y <- datos$precio_por_unidad_area
+X_escalanatural <- subset(df_ninxs, select=c(P6020, P6040, P6081, P6083, P6080, num_ninxs, num_adultxs, num_abuelxs, P6160, P8586, P1930, afiliado, P51, P771, P772, P773, actividad))
+Y <- df_ninxs$prom_satisfaccion
 X_centrada <- scale(X_escalanatural,center = TRUE, scale = TRUE)
-media_total <- attr(X_centrada,'scaled:center')
-desv_est_total <- attr(X_centrada,'scaled:scale')
+media_total <- attr(X_centrada, 'scaled:center')
+desv_est_total <- attr(X_centrada, 'scaled:scale')
 ```
 
 Creación del modelo KNN con K=4 vecinos:
@@ -166,8 +158,6 @@ Creación del modelo KNN con K=4 vecinos:
 modelo_knn_N_k4 <- knnreg(x=X_centrada,y=Y,k=4)
 ```
 
-
-
 ## Guardado de los elementos para ejecutar el modelo:
 
 ```{r}
@@ -175,7 +165,6 @@ save(file="modeloknnNinxs.RData",list=c("modelo_knn_N_k4",
                                    "media_total",
                                    "desv_est_total"))
 ```
-
 
 Ahora se realiza para los abuelxs
 
@@ -186,9 +175,9 @@ En esta aproximación se utiliza el 75% de los datos para entrenamiento y el 25%
 ```{r aprox1_tr_n_vl}
 set.seed(202204) # se fija por reproducibilidad
 
-ctrl_1_a<-trainControl(method = "LGOCV",p=0.75,number = 1)
+ctrl_1_a<-trainControl(method = "LGOCV", p=0.75,number = 1)
 
-aprox1_tr_a_vl<-train(prom_satisfaccion ~ P6020 + P6040 + P5502 + P6071 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P8587 + P6100 + P1930 + P6426 + P3193 + dinero_trabajo + dinero_extra,
+aprox1_tr_a_vl <- train(prom_satisfaccion ~ P6020 + P6040 + P5502 + P6071 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8587 + P1930 + afiliado,
              data       = df_abuelxs,
              method     = "knn",
              preProcess = c("center","scale"),
@@ -209,7 +198,7 @@ set.seed(202204) # se fija por reproducibilidad
 
 ctrl_2_a<-trainControl(method = "cv",number = 20)
 
-aprox2_cv_a_5<-train(prom_satisfaccion ~ P6020 + P6040 + P5502 + P6071 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8586 + P8587 + P6100 + P1930 + P6426 + P3193 + dinero_trabajo + dinero_extra,
+aprox2_cv_a_5 <- train(prom_satisfaccion ~ P6020 + P6040 + P5502 + P6071 + P6080 + num_ninxs + num_adultxs + num_abuelxs + P6160 + P8587 + P1930 + afiliado,
              data       = df_abuelxs,
              method     = "knn",
              preProcess = c("center","scale"),
@@ -222,29 +211,24 @@ aprox2_cv_a_5<-train(prom_satisfaccion ~ P6020 + P6040 + P5502 + P6071 + P6080 +
 plot(aprox2_cv_a_5)
 ```
 
-
-
-
 ```{r}
 k <- aprox2_cv_a_5$results$k
 RMSE <-  aprox2_cv_a_5$results$RMSE
 RMSESD <-  aprox2_cv_a_5$results$RMSESD
-plot(k,RMSE,las=1,type="b",col="blue",lwd=2,ylim=c(7.8,8.8))
-# lines(k,RMSE+1.96*RMSESD,type="p",col="red",lwd=2)
-# lines(k,RMSE-1.96*RMSESD,type="p",col="red",lwd=2) 
+plot(k,RMSE,las=1,type="b",col="blue",lwd=2)
+lines(k,RMSE+1.96*RMSESD,type="p",col="red",lwd=2)
+lines(k,RMSE-1.96*RMSESD,type="p",col="red",lwd=2) 
 grid()
 ```
-
-
 
 Para crear el modelo final se usan todos los datos:
 
 Preprocesamiento de los datos:
 
 ```{r}
-X_escalanatural <- subset(datos,select=c(edad_casa,dist_mrt,cant_tiendas))
-Y <- datos$precio_por_unidad_area
-X_centrada <- scale(X_escalanatural,center = TRUE, scale = TRUE)
+X_escalanatural <- subset(df_abuelxs, select=c(P6020, P6040, P5502, P6071, P6080, num_ninxs, num_adultxs, num_abuelxs, P6160, P8587, P1930, afiliado))
+Y <- df_abuelxs$prom_satisfaccion
+X_centrada <- scale(X_escalanatural, center = TRUE, scale = TRUE)
 media_total <- attr(X_centrada,'scaled:center')
 desv_est_total <- attr(X_centrada,'scaled:scale')
 ```
@@ -254,8 +238,6 @@ Creación del modelo KNN con K=4 vecinos:
 ```{r}
 modelo_knn_A_k4 <- knnreg(x=X_centrada,y=Y,k=4)
 ```
-
-
 
 ## Guardado de los elementos para ejecutar el modelo:
 

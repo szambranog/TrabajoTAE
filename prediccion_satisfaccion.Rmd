@@ -31,23 +31,25 @@ library(knitr)
 Se lee un conjunto de datos sobre información del hogar, estos datos son tomados de la [Encuesta Nacional de Calidad de Vida](https://microdatos.dane.gov.co/index.php/catalog/MICRODATOS/about_collection/8/?per_page=15).
 La definición de las variables que se consideran se puede encontrar en [Diccionario Encuesta Nacional de Calidad de Vida](https://microdatos.dane.gov.co/index.php/catalog/718/data_dictionary)
 
+Se define 12 años como la edad máxima para niñxs, de acuerdo a la [Ley 1098 de 2006](https://www.dnp.gov.co/programas/desarrollo-social/pol%C3%ADticas-sociales-transversales/Paginas/infancia-y-adolescencia.aspx#:~:text=%E2%80%8B%E2%80%8B%E2%80%8B%E2%80%8B%E2%80%8B,son%20sujetos%20titulares%20de%20derecho). Y se define 60 años como la edad mínima para abuelxs según lo definido en este [link](https://www.corteconstitucional.gov.co/relatoria/2010/t-138-10.htm#:~:text=Es%20aquella%20persona%20que%20cuenta,que%20se%20acaban%20de%20explicar)
+
 ```{python lectura_bd}
 import generar_dataframes
 
 generar_dataframes.generarDataFrame()
 ```
 
-Para niñxs se tienen las siguientes variables: P6020, P6040, P6081, P6083, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P171, trabaja, dinero, P6160, P8586, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P51, P771, P772, P773, P58, actividad
-Para abuelxs se tienen las siguientes variables: P6020, P6040, P5502, P6071, P6080, prom_satisfaccion, num_ninxs, num_adultxs, num_abuelxs, P6160, P8586, P8587, P6090, P6100, P8551, P799S2, P799S3, P799S1, P799S4, P799S5, P3176, P1930, P1906S1, P1906S2, P1906S3, P1906S4, P1906S5, P1906S6, P1906S7, P1906S8, P3008S1, P3008S2, P1707, P3003, P1708, P1708S1, P5452, P6161S1, P6426, P3193, dinero_trabajo, dinero_extra
+Las variables a considerar son: 
 
-Las variables creadas son:
+Además, se crean las siguientes:
 
-* **prom_satisfaccion:** Promedio de la satisfacción de la persona. LOs valores nulos son calculados como el promedio de la satisfacción del hogar
+* **prom_satisfaccion:** Promedio de la satisfacción de la persona. Los valores nulos son calculados como el promedio de la satisfacción del hogar
 * **num_ninxs:** Número de niñxs en el hogar
 * **num_adultxs:** Número de personas entre 12 y 60 años en el hogar
 * **num_abuelxs:** Número de abuelxs en el hogar
 * **trabaja:** 1. Trabaja, 0. No trabaja
 * **dinero:** Dinero conseguido por el trabajo
+* **afiliado:** Indica la afiliación a salud que tiene
 * **actividad:** Frecuencia con la que realiza una actividad de la lista de Atención integral
 * **dinero_trabajo:** Dinero conseguido por el trabajo
 * **dinero_extra:** Dinero conseguido por factores diferentes al trabajo
@@ -474,6 +476,7 @@ h <- hist(df_abuelxs$dinero_extra, xlab='Dinero ($ en millones)', ylab='Frecuenc
 Debido a que la mayoría de respuestas es que lxs abuelxs no trabajan y no reciben ingresos por trabajo, estas variables se eliminarán del modelo
 
 ```{r}
-df_ninxs[c('P6426', 'dinero_trabajo', 'dinero_extra')] <- NULL
+df_abuelxs[c('P6426', 'dinero_trabajo', 'dinero_extra')] <- NULL
 ```
 
+Tras el análisis de las variables tomadas en primera instancia, en la siguiente tabla se encuentran las variables que se utilizarán para el modelo
