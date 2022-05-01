@@ -23,7 +23,7 @@ library(reshape2)
 library(reticulate)
 library(dplyr)
 library(knitr)
-use_python('/usr/bin/python3')
+##use_python('/usr/bin/python3')
 ```
 
 # Lectura de datos
