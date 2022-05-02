@@ -1,5 +1,5 @@
 # Trabajo 1 Ténicas en aprendizaje estadístico.
-### Nombre de los archivo a ejecutar en orden:  generar_dataframes.py | prediccion_satisfaccion.Rmd | 
+### Nombre de los archivo a ejecutar en orden:  generar_dataframes.py | prediccion_satisfaccion.Rmd | prediccion_satisfaccion_modelamiento.Rmd | App.R |
 ### Código modelamiento: prediccion_satisfaccion_modelamiento.Rmd (ejecutar con la opción "Run all")
 ### Reporte técnico en Rpubs: https://rpubs.com/seazambrano/897265
 ### Aplicación web Shiny Niños/as ejecutar en orden: prediccion_satisfaccion_modelamiento.Rmd | App.R
