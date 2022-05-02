@@ -25,6 +25,14 @@ library(dplyr)
 library(knitr)
 ##use_python('/usr/bin/python3')
 ```
+# Explicación modelo y variables escogidas
+
+Cabe recalcar que en principio se eligen los rangos de edad según la información legal en Colombia de clasificación de grupos de edad, como es el caso de los niños en donde, “se entiende por niño o niña, las personas entre los 0 y los 12 años de edad” (DNP, 2006). Mismo caso que en la edad de los Abuelos/as en donde se determina que la edad legal de la “Tercera edad” con fines económicas es, “En efecto, a fecha de hoy, según el artículo 33 de la Ley 100 de 1993, tal y como fuera modificado por la Ley 797 de 2003, la edad para pensionarse es de cincuenta y cinco (55) años de edad en el caso de las mujeres, o sesenta (60) años de edad en el caso de los hombres” (Corte constitucional de Colombia, 2009). 
+Posteriormente y con el objetivo tener precisión con la predicción de la satisfacción y demás variables necesarias para construir un modelo adecuado y puntual, se escogen las variables para ambos grupos de datasets mostrados a continuación en la Tabla 1, y Tabla 2.
+Se observa como varias de las variables de ambos conjuntos de datos son compartidas, esto debido a que dichas variables son de importancia en la predicción de la satisfacción de vida para ambos grupos de edades, especialmente en niños las variables P6080, P6081, P6083, P1895 – P1899 relacionadas con las relaciones, cultura y cómo percibe su situación actual la persona son de gran interés como expresado investigaciones de satisfacción de vida, “The followingareas are addressed: models of lifesatisfaction; convergent validity; discriminantvalidity; relationships with other well-beingmeasures; relationships with external,environmental circumstances; relationships withdemographic variables; cultural factors; groupdifferences on life satisfaction measures;predictive relationships; and stability of lifesatisfaction reports.” (Research on Assessment of Life Satisfaction of Children and Adolescents, 2004). Con base a estas variables se desarrolla la nueva variable “prom_satisfaccion” que reúne los datos de cada encuesta por dirección y los promedia, con el fin de evaluar la satisfacción promedio percibida por cada registro. 
+Se hace uso de la variable P6020 y P6040 para determinar un patrón de comportamiento en las encuestas según el género y la edad de cada persona, tanto de abuelo/a o niño/a, se considera también importante conocer sus estados de salud, si posee una enfermedad crónica, su nivel de educación etc. Con el objetivo de analizar factores extremos que se puedan dar en el conjunto de datos, es decir, en el caso de un niño/a, no saber leer o escribir es un dato relevante a considerar, sin embargo, es más relevante para el modelo si es un abuelo/a quien no sepa leer o escribir pues estas son condiciones necesarias para identificar la integridad de una persona, que además va de la mano con variables de salud y educación para determinar la integridad de cada persona en el modelo. 
+Específicamente en el caso de niños/as se pretende estudiar 5 principales puntos críticos, composición del hogar, educación y salud (como previamente detallado) y además su atención integral y trabajo infantil, para determinar si es alguien que trabaja o si no, esto sumado a su actual nivel educativo nos permite identificar registros de “riesgo”. Adicionalmente, conocer de quienes se rodean y que tipo de parentesco tienen con quienes se rodean junto con la calidad de educación de estos, es de suma importancia para su desarrollo y por ende en su satisfacción de vida, “child outcomes and youth problems are worsening despite rising economic prosperity. However, these outcomes can be avoided and are successfully addressed in other countries whose policies focus more on family support, valuing parenthood (eg. with good parental leave provisions), early childhood services and on reducing inequalties” (Fiona Stanley, 2007). 
+En el conjunto de datos de abuelos/as, nuestro enfoque principal se da en Salud, satisfacción percibida y también juega un rol importante su compañía, es decir, cónyuge y su estado civil, se resta importancia a variables de educación, aunque siguen presentes, y entran en juego variables relacionadas con el trabajo, dinero acumulado, y en caso de laborar, la duración de cuanto lleva realizándolo. Incluimos un dataset relacionado con la fuerza laboral que ejerce cada persona, y sumamos importancia al factor económico con el objetivo de realizar un análisis sobre las necesidades que deben ser cumplidas por cada persona. Por último, se da importancia a sus allegados y quienes rodean a la persona, pues es en promedio la razón principal de afectación a la salud mental de ancianos/as, abuelos/as y personas de la tercera edad en general y con consecuente su satisfacción de vida. “En uno de los elementos que componen la calidad de vida, el bienestar como principales resultados destacaron el inferior nivel de satisfacción que tienen los (ancianos/as) institucionalizados en los aspectos relacionales.” (Bienestar y calidad de vida en ancianos institucionalizados y no institucionalizados, 2008)
 
 # Lectura de datos
 
@@ -484,4 +492,16 @@ Tras el análisis de las variables tomadas en primera instancia, en la siguiente
 ```{r}
 colnames(df_ninxs)
 ```
+# Conclusiones y Recomendaciones
+
+
+
+
+# Bibliografía 
+
+(DNP. 2006, Colombia, https://www.dnp.gov.co/programas/desarrollo-social/pol%C3%ADticas-sociales-transversales/Paginas/infancia-y-adolescencia.aspx#:~:text=%E2%80%8B%E2%80%8B%E2%80%8B%E2%80%8B%E2%80%8B,son%20sujetos%20titulares%20de%20derecho)
+(Corte Constitucional Colombiana, 2009, Colombia, https://www.corteconstitucional.gov.co/relatoria/2010/t-138-10.htm#:~:text=Es%20aquella%20persona%20que%20cuenta,que%20se%20acaban%20de%20explicar)
+(Research on Assessment of Life Satisfaction of Children and Adolescents, 2004, E. Scott Huebner, https://link.springer.com/article/10.1023/B:SOCI.0000007497.57754.e3)
+(Fiona Stanley, The importance of caring for children in Australian Society, 2007, https://search.informit.org/doi/abs/10.3316/INFORMIT.492990560762621)
+(C Molina Sena, Bienestar y calidad de vida en ancianos institucionalizados y no institucionalizados, 2008, https://revistas.um.es/analesps/article/view/42861)
 
