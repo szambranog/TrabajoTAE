@@ -1,4 +1,4 @@
-# Trabajo 1 Ténicas en aprendizaje estadístico.
+# Trabajo 1 Técnicas en aprendizaje estadístico.
 ### Nombre de los archivo a ejecutar en orden:  prediccion_satisfaccion.Rmd | prediccion_satisfaccion_modelamiento.Rmd (ejecutar con la opción "Run all") | App.R |
 ### Código modelamiento: prediccion_satisfaccion_modelamiento.Rmd (ejecutar con la opción "Run all")
 ### Reporte técnico en Rpubs: https://rpubs.com/seazambrano/897265
