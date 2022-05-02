@@ -487,15 +487,15 @@ Debido a que la mayoría de respuestas es que lxs abuelxs no trabajan y no recib
 df_abuelxs[c('P6426', 'dinero_trabajo', 'dinero_extra')] <- NULL
 ```
 
-Tras el análisis de las variables tomadas en primera instancia, en la siguiente tabla se encuentran las variables que se utilizarán para el modelo
+Tras el análisis de las variables tomadas en primera instancia, en la siguiente tabla se encuentran las variables que se utilizarán para el modelo.
 
 ```{r}
 colnames(df_ninxs)
 ```
 # Conclusiones y Recomendaciones
 
-
-
+Es importante tener claro que muchas de las variables de la base de datos de donde se fue extraida, fueron eliminadas ya que brindaba informacion que no aportaba al modelo con el que se trabajaba, por este motivo se debe tratar de que estas variables sean lo mas afines posibles a tu proyecto.  Cabe recalcar que sobre este avance, se puede seguir de cerca como varia la calidad de vidad de las personas del pais y asi tener en cuenta otros factores donde se vea afectada esta comunidad.
+Estos tipo de bases de datos ayudan mucho para identificar ciertas poblaciones donde se ve afectadas y asi el gobierno puede tomar cartas en el asunto. Podemos demostrar tambien que por medio de este analisis estadistico los datos se pueden ven mas detallados y trabajar con mas facilidad para llegar a una conclusion concreta y saber cuales son los problemas y a donde hay que actuar. Por ultimo se debe considerar la dinamica de censos poblacionales y tener muy claras las variables edades y sexos de la poblacion, junto con el sistema economico para llevar a un mejor desarrollo economico, social y demografico del pais.
 
 # Bibliografía 
 
