@@ -70,7 +70,7 @@ server <- function(input, output) {
                           P51 = input$permanece_n, P771 = input$permanece_ed_n,
                           P772 = input$no_asiste_n, P773 = input$tipo_est_n,
                           actividad = input$actividad_n)
-    entrada_preprocesada <- scale(entrada, center = media_total_N, scale = desv_est_total_N)
+    entrada_preprocesada <- scale(entrada, center = media_total_n, scale = desv_est_total_n)
     salida_n <- predict(modelo_knn_N_k4, newdata = entrada_preprocesada)
     return(salida)
   })

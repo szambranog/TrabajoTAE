@@ -1,6 +1,6 @@
 ---
 title: 'Predicción de la satisfacción de niñxs y abuelxs'
-author: 'Esteban Rojas Henao'
+author: 'Esteban Rojas Henao, Juan Manuel Trujillo, Sergio Andrés Zambrano, Miguel Angel Rojas'
 date: '25/4/2022'
 output:
  html_document:
@@ -33,6 +33,13 @@ Se observa como varias de las variables de ambos conjuntos de datos son comparti
 Se hace uso de la variable P6020 y P6040 para determinar un patrón de comportamiento en las encuestas según el género y la edad de cada persona, tanto de abuelo/a o niño/a, se considera también importante conocer sus estados de salud, si posee una enfermedad crónica, su nivel de educación etc. Con el objetivo de analizar factores extremos que se puedan dar en el conjunto de datos, es decir, en el caso de un niño/a, no saber leer o escribir es un dato relevante a considerar, sin embargo, es más relevante para el modelo si es un abuelo/a quien no sepa leer o escribir pues estas son condiciones necesarias para identificar la integridad de una persona, que además va de la mano con variables de salud y educación para determinar la integridad de cada persona en el modelo. 
 Específicamente en el caso de niños/as se pretende estudiar 5 principales puntos críticos, composición del hogar, educación y salud (como previamente detallado) y además su atención integral y trabajo infantil, para determinar si es alguien que trabaja o si no, esto sumado a su actual nivel educativo nos permite identificar registros de “riesgo”. Adicionalmente, conocer de quienes se rodean y que tipo de parentesco tienen con quienes se rodean junto con la calidad de educación de estos, es de suma importancia para su desarrollo y por ende en su satisfacción de vida, “child outcomes and youth problems are worsening despite rising economic prosperity. However, these outcomes can be avoided and are successfully addressed in other countries whose policies focus more on family support, valuing parenthood (eg. with good parental leave provisions), early childhood services and on reducing inequalties” (Fiona Stanley, 2007). 
 En el conjunto de datos de abuelos/as, nuestro enfoque principal se da en Salud, satisfacción percibida y también juega un rol importante su compañía, es decir, cónyuge y su estado civil, se resta importancia a variables de educación, aunque siguen presentes, y entran en juego variables relacionadas con el trabajo, dinero acumulado, y en caso de laborar, la duración de cuanto lleva realizándolo. Incluimos un dataset relacionado con la fuerza laboral que ejerce cada persona, y sumamos importancia al factor económico con el objetivo de realizar un análisis sobre las necesidades que deben ser cumplidas por cada persona. Por último, se da importancia a sus allegados y quienes rodean a la persona, pues es en promedio la razón principal de afectación a la salud mental de ancianos/as, abuelos/as y personas de la tercera edad en general y con consecuente su satisfacción de vida. “En uno de los elementos que componen la calidad de vida, el bienestar como principales resultados destacaron el inferior nivel de satisfacción que tienen los (ancianos/as) institucionalizados en los aspectos relacionales.” (Bienestar y calidad de vida en ancianos institucionalizados y no institucionalizados, 2008)
+
+![](https://raw.githubusercontent.com/szambranog/TrabajoTAE/main/Images/tabla1.JPG){width='500px'}
+
+![](https://raw.githubusercontent.com/szambranog/TrabajoTAE/main/Images/tabla2.JPG){width='500px'}
+
+![](https://raw.githubusercontent.com/szambranog/TrabajoTAE/main/Images/tabla4.JPG){width='500px'}
+
 
 # Lectura de datos
 
@@ -492,6 +499,7 @@ Tras el análisis de las variables tomadas en primera instancia, en la siguiente
 ```{r}
 colnames(df_ninxs)
 ```
+
 # Conclusiones y Recomendaciones
 
 Es importante tener claro que muchas de las variables de la base de datos de donde se fue extraida, fueron eliminadas ya que brindaba informacion que no aportaba al modelo con el que se trabajaba, por este motivo se debe tratar de que estas variables sean lo mas afines posibles a tu proyecto.  Cabe recalcar que sobre este avance, se puede seguir de cerca como varia la calidad de vidad de las personas del pais y asi tener en cuenta otros factores donde se vea afectada esta comunidad.
